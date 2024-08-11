@@ -1,29 +1,47 @@
 ﻿@inject IViewInventoriesByNameUseCase _ViewInventoriesByNameUseCase
 
 <div class="input-group">
-	<input class="form-control" placeholder="search" @bind-value=SearchFilter />
+	<input class="form-control" placeholder="search inventories" @bind-value=SearchFilter @bind-value:event="oninput" />
 	<button type="button" class="btn btn-success input-group-text" @onclick="HandleSearch">Search</button>
 </div>
 
 @if (inventories is not null && inventories.Any())
 {
-	<div style="overflow-y:auto; max-height:300px; border: 1px solid silver; padding-top: 5px">
-		<ul style="list-style:none">
+	<div class="search-result">
+		<ul>
 			@foreach (var inv in inventories)
 			{
-				<li @key="inv.InventoryId" style="cursor:pointer">@inv.InventoryName</li>
+				<li @key="inv.InventoryId" @onclick="() => { HandleSelectInventory(inv); }">@inv.InventoryName</li>
 			}
 		</ul>
 	</div>
 }
 
 @code {
-	private string SearchFilter = string.Empty;
+	[Parameter]
+	public EventCallback<Inventory> OnInventorySelected { get; set; }
+
+	string _SearchFilter = string.Empty;
+	private string SearchFilter
+	{
+		get => _SearchFilter;
+		set { _SearchFilter = value; HandleSearch(); }
+	}
 
 	List<Inventory> inventories = new();
 
 	private async Task HandleSearch()
 	{
 		inventories = (await _ViewInventoriesByNameUseCase.ExecuteAsync(SearchFilter ?? "")).ToList();
+
+		// because setter
+		StateHasChanged();
+	}
+
+	private async Task HandleSelectInventory(Inventory inventory)
+	{
+		await OnInventorySelected.InvokeAsync(inventory);
+
+		inventories.Clear();
 	}
 }

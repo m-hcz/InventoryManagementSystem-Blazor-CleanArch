@@ -12,7 +12,7 @@ namespace IMS.UseCases.Products
 {
     public class ViewProductByIdUseCase(IProductRepository _productsRepository) : IViewProductByIdUseCase
     {
-        public async Task<Product> ExecuteAsync(int id)
+        public async Task<Product?> ExecuteAsync(int id)
         {
             return await _productsRepository.GetProductByIdAsync(id);
         }

@@ -48,11 +48,44 @@ namespace IMS.Plugins.InMemory
 			return _products.Where(_ => _.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
 		}
 
-		public async Task<Product> GetProductByIdAsync(int id)
+		public async Task<Product?> GetProductByIdAsync(int id)
 		{
-			var inv = _products.First(_ => _.Id == id);
+			var prod = _products.FirstOrDefault(_ => _.Id == id);
+			var newProd = new Product();
 
-			return await Task.FromResult(inv);
+			if (prod is not null)
+			{
+				newProd.Id = prod.Id;
+				newProd.Name = prod.Name;
+				newProd.Price = prod.Price;
+				newProd.Quantity = prod.Quantity;
+				newProd.ProductInventories = new List<ProductInventory>();
+
+				if(prod.ProductInventories != null)
+					foreach (var prodInv in prod.ProductInventories)
+					{
+						var newProdInv = new ProductInventory
+						{
+							InventoryId = prodInv.InventoryId,
+							ProductId = prodInv.ProductId,
+							Product = prod,
+							Inventory = new Inventory(),
+							InventoryQuantity=prodInv.InventoryQuantity,
+						};
+
+						if (prodInv.Inventory != null)
+						{
+							newProdInv.Inventory.InventoryId = prodInv.Inventory.InventoryId;
+							newProdInv.Inventory.InventoryName = prodInv.Inventory.InventoryName;
+							newProdInv.Inventory.Price = prodInv.Inventory.Price;
+							newProdInv.Inventory.Quantity = prodInv.Inventory.Quantity;
+						}
+
+						newProd.ProductInventories.Add(newProdInv);
+					}
+			}
+
+			return await Task.FromResult(newProd);
 		}
 
 		public Task UpdateProductAsync(Product product)
@@ -60,13 +93,14 @@ namespace IMS.Plugins.InMemory
 			if (_products.Any(_ => _.Id != product.Id && _.Name.Equals(product.Name, StringComparison.OrdinalIgnoreCase)))
 				return Task.CompletedTask;
 
-			var p = _products.First(_ => _.Id == product.Id);
+			var p = _products.FirstOrDefault(_ => _.Id == product.Id);
 
 			if (p is not null)
 			{
 				p.Name = product.Name;
 				p.Quantity = product.Quantity;
 				p.Price = product.Price;
+				p.ProductInventories=product.ProductInventories;
 			}
 
 			return Task.CompletedTask;
