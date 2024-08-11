@@ -1,0 +1,49 @@
+﻿@page "/addProduct"
+@inject IAddProductUseCase _AddProductUseCase
+@inject NavigationManager _NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Add Product</PageTitle>
+
+<h3>Add Product</h3>
+<br />
+
+<EditForm Model="Product" OnValidSubmit="Save">
+	<DataAnnotationsValidator></DataAnnotationsValidator>
+
+	<div class="form-group">
+		<label for="name">Name</label>
+		<InputText id="name" @bind-Value="Product.Name" class="form-control"></InputText>
+		<ValidationMessage For="()=> Product.Name"></ValidationMessage>
+	</div>
+	<div class="form-group">
+		<label for="quantity">Quantity</label>
+		<InputNumber id="quantity" @bind-Value="Product.Quantity" class="form-control"></InputNumber>
+		<ValidationMessage For="()=> Product.Quantity"></ValidationMessage>
+	</div>
+	<div class="form-group">
+		<label for="price">Price</label>
+		<InputNumber id="price" @bind-Value="Product.Price" class="form-control"></InputNumber>
+		<ValidationMessage For="()=> Product.Price"></ValidationMessage>
+	</div>
+	<div class="form-group">
+		<label for="inventories">Inventories</label>
+		<SearchProductInventoriesComponent/>
+	</div>
+	<br />
+
+	<button type="submit" class="btn btn-primary">Save</button>
+	&nbsp;
+	<a href="/inventories" class="btn btn-outline-primary">Cancel</a>
+</EditForm>
+
+@code {
+	private Product Product { get; set; } = new();
+
+	private async Task Save()
+	{
+		await _AddProductUseCase.ExecuteAsync(Product);
+
+		_NavigationManager.NavigateTo("/products");
+	}
+}

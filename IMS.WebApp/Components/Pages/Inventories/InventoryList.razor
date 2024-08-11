@@ -1,0 +1,24 @@
+﻿@page "/inventories"
+
+<PageTitle>Inventory List</PageTitle>
+
+<h3>Inventory List</h3>
+<br />
+<br />
+
+<SearchComponent OnSearch="HandleSearch" />
+<br />
+
+<InventoryListComponent SearchInventoryFilter="@SearchInventoryFilter" />
+
+<a href="/addinventory" class="btn btn-primary">Add Inventory</a>
+
+@code {
+	public string SearchInventoryFilter { get; set; } = string.Empty;
+
+	private void HandleSearch(string searchFilter)
+	{
+		SearchInventoryFilter = searchFilter;
+	}
+
+}
