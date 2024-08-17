@@ -1,0 +1,51 @@
+﻿@page "/account/manageusers"
+@using IMS.WebApp.Data
+@using Microsoft.AspNetCore.Identity
+@attribute [Authorize(Policy = "Admin")]
+
+@inject UserManager<ApplicationUser> _UserManager
+
+<PageTitle>Manage Users</PageTitle>
+
+<h3>Manage Users</h3>
+<br />
+<br />
+
+@if (users != null && users.Any())
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>User</th>
+				<th>Department</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var user in users)
+			{
+				<tr>
+					<td>@user.appUser.Email</td>
+					<td>@user.department</td>
+					<td><a href="/account/manageuser/@user.appUser.Id" class="btn btn-link">Manage</a> </td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+@code {
+	const string departmentString = "Department";
+
+	List<(ApplicationUser appUser, string department)> users = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		foreach (var user in _UserManager.Users.ToList())
+		{
+			var claims = await _UserManager.GetClaimsAsync(user);
+
+			users.Add((user, claims.FirstOrDefault(_ => _.Type == departmentString)?.Value ?? string.Empty));
+		}
+	}
+}

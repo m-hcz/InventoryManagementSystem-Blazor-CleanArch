@@ -1,10 +1,13 @@
 ﻿@page "/purchase"
+@attribute [Authorize(Policy = "Purchasers")]
+@rendermode InteractiveServer
+
 @inject IViewInventoriesByNameUseCase _ViewInventoriesByNameUseCase
 @inject IViewInventoryByIdUseCase _ViewInventoryByIdUseCase
 @inject IPurchaseInventoryUseCase _PurchaseInventoryUseCase
 @inject IJSRuntime _JSRuntime
+@inject AuthenticationStateProvider _AuthenticationStateProvider
 
-@rendermode InteractiveServer
 
 <PageTitle>Purchase Inventory</PageTitle>
 
@@ -55,6 +58,13 @@
 	PurchaseViewModel purchaseViewModel = new();
 	Inventory? selectedInventory;
 
+	AuthenticationState? authState;
+
+	protected override async Task OnInitializedAsync()
+	{
+		authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+	}
+
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
@@ -82,7 +92,12 @@
 
 	private async Task Purchase()
 	{
-		await _PurchaseInventoryUseCase.ExecuteAsync(purchaseViewModel.PONumber, selectedInventory, purchaseViewModel.QuantityToPurchase, "Name");
+		string userName = string.Empty;
+
+		if (authState?.User?.Identity?.IsAuthenticated ?? false)
+			userName = authState.User.Identity.Name ?? string.Empty;
+
+		await _PurchaseInventoryUseCase.ExecuteAsync(purchaseViewModel.PONumber, selectedInventory, purchaseViewModel.QuantityToPurchase, userName);
 
 		purchaseViewModel = new();
 		selectedInventory = null;

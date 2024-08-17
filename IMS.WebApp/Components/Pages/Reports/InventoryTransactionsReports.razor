@@ -1,8 +1,10 @@
 ﻿@page "/inventoryreport"
+@attribute [Authorize]
+@rendermode InteractiveServer
+
 @inject ISearchInventoryTransactionsUseCase _SearchInventoryTransactionsUseCase
 @inject IJSRuntime _JSRuntime
 
-@rendermode InteractiveServer
 
 <h3>Inventory Transactions</h3>
 <br />

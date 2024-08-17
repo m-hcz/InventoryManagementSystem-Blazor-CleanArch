@@ -1,4 +1,6 @@
 ﻿@page "/editinventory/{invId:int}"
+@attribute [Authorize(Policy = "Inventory")]
+
 @inject IViewInventoryByIdUseCase _ViewInventoryByIdUseCase
 @inject IEditInventoryUseCase _EditInventoryUseCase
 @inject NavigationManager _NavigationManager

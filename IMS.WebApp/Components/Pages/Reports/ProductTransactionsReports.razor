@@ -1,8 +1,10 @@
 ﻿@page "/productreport"
+@attribute [Authorize]
+@rendermode InteractiveServer
+
 @inject ISearchProductTransactionsUseCase _SearchProductTransactionsUseCase
 @inject IJSRuntime _JSRuntime
 
-@rendermode InteractiveServer
 
 
 <h3>Product Transactions</h3>
