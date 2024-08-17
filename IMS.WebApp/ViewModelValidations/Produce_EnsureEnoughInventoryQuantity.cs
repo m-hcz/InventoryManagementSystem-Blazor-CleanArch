@@ -15,8 +15,8 @@ namespace IMS.WebApp.ViewModelValidations
 				{
 					foreach (var pi in produceViewModel.Product.ProductInventories)
 					{
-						if (pi.Inventory != null && pi.InventoryQuantity * produceViewModel.QuantityToProduce > pi.Inventory.Quantity)
-							return new ValidationResult($"The inventory ({pi.Inventory.InventoryName}) is not enough to produce {produceViewModel.QuantityToProduce} products.", new[] { validationContext.MemberName });
+						if (pi.Inventory != null && pi.InventoryQuantity * produceViewModel.QuantityToSell > pi.Inventory.Quantity)
+							return new ValidationResult($"The inventory ({pi.Inventory.InventoryName}) is not enough to produce {produceViewModel.QuantityToSell} products.", new[] { validationContext.MemberName });
 					}
 				}
 			}

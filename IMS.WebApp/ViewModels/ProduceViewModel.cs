@@ -14,7 +14,7 @@ namespace IMS.WebApp.ViewModels
 
 		[Range(minimum: 1, maximum: int.MaxValue, ErrorMessage = "Quantity has to be greater or equal to 1.")]
 		[Produce_EnsureEnoughInventoryQuantity]
-		public int QuantityToProduce { get; set; }
+		public int QuantityToSell { get; set; }
 
 		public Product? Product { get; set; }
 	}

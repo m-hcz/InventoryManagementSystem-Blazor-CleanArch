@@ -28,7 +28,7 @@
 	public EventCallback<ItemViewModel> OnItemSelected { get; set; }
 
 	[Parameter]
-	public Func<string, List<ItemViewModel>>? SearchFunction { get; set; }
+	public Func<string, Task<List<ItemViewModel>>>? SearchFunction { get; set; }
 
 	string _userInput = string.Empty;
 	public string userInput
@@ -38,7 +38,17 @@
 			_userInput = value;
 
 			if (!string.IsNullOrEmpty(_userInput) && SearchFunction != null)
-				searchResult = SearchFunction(_userInput);
+				ViewItemsAsync();
+		}
+	}
+
+	private async Task ViewItemsAsync()
+	{
+		if (SearchFunction != null)
+		{
+			searchResult = await SearchFunction(_userInput);
+
+			StateHasChanged();
 		}
 	}
 
@@ -49,7 +59,7 @@
 	{
 		ClearHighlighting();
 
-		if(item != null)
+		if (item != null)
 		{
 			selectedItem = item;
 			userInput = item?.Name ?? "";

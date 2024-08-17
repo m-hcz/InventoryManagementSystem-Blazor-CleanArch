@@ -36,8 +36,8 @@
 
 	<div class="form-group">
 		<label for="qty">Quantity</label>
-		<InputNumber id="qty" @bind-Value="produceViewModel.QuantityToProduce" class="form-control" />
-		<ValidationMessage For="()=> produceViewModel.QuantityToProduce"></ValidationMessage>
+		<InputNumber id="qty" @bind-Value="produceViewModel.QuantityToSell" class="form-control" />
+		<ValidationMessage For="()=> produceViewModel.QuantityToSell"></ValidationMessage>
 	</div>
 
 	<br />
@@ -52,7 +52,7 @@
 
 	Product? selectedProduct;
 
-		protected override async Task OnAfterRenderAsync(bool firstRender)
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
@@ -60,9 +60,9 @@
 		}
 	}
 
-	private List<ItemViewModel>? SearchProduct(string name)
+	private async Task<List<ItemViewModel>?> SearchProduct(string name)
 	{
-		var list = _ViewProductsByNameUseCase.ExecuteAsync(name).GetAwaiter().GetResult();
+		var list = await _ViewProductsByNameUseCase.ExecuteAsync(name);
 
 		if (list == null) return null;
 
@@ -80,7 +80,7 @@
 
 	private async Task Produce()
 	{
-		await _ProduceProductUseCase.ExecuteAsync(produceViewModel.ProductionNumber, selectedProduct, produceViewModel.QuantityToProduce, "Name");
+		await _ProduceProductUseCase.ExecuteAsync(produceViewModel.ProductionNumber, selectedProduct, produceViewModel.QuantityToSell, "Name");
 
 		produceViewModel = new();
 		selectedProduct = null;

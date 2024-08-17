@@ -9,6 +9,8 @@ namespace IMS.UseCases.PluginInterfaces
 {
 	public interface IProductTransactionRepository
 	{
+		Task<IEnumerable<ProductTransaction>> GetProductTransactionsAsync(string productName, DateTime? dateFrom, DateTime? toDate, ProductTransactionType? transactionType);
 		Task ProduceAsync(string productNumber, Product product, int quantity, string doneBy);
+		Task SellProductAsync(string salesOrderNumber, Product product, int quantity, double unitPrice, string doneBy);
 	}
 }
